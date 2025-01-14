@@ -22,38 +22,40 @@
         /* Builder Layout */
         .builder-container {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
         }
 
         .sidebar {
-            flex: 1 1 25%;
-            max-width: 300px;
+            flex: 0 0 20%;
             background: #ffffff;
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 10px;
-            margin: 10px;
-            height: 600px;
+            margin-right: 10px;
+            height: 100%;
+            max-height: 80vh;
             overflow-y: auto;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar h2 {
-            font-size: 1.2em;
-            margin-bottom: 10px;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            text-align: center;
         }
 
         .sidebar .element {
-            padding: 8px;
-            margin-bottom: 8px;
+            padding: 6px;
+            margin-bottom: 6px;
             background-color: #007BFF;
             color: #fff;
             text-align: center;
             border-radius: 5px;
             cursor: grab;
+            font-size: 14px;
         }
 
         .sidebar .element:hover {
@@ -61,13 +63,12 @@
         }
 
         .drop-zone {
-            flex: 1 1 70%;
-            min-height: 600px;
+            flex: 1;
+            min-height: 80vh;
             background: #ffffff;
             border: 2px dashed #ddd;
             border-radius: 8px;
-            padding: 20px;
-            margin: 10px;
+            padding: 15px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
         }
@@ -84,16 +85,21 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             text-align: center;
+            cursor: pointer;
+        }
+
+        .drop-zone .dropped:hover {
+            background-color: #e0f7fa;
         }
 
         .actions {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         .actions button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 10px 15px;
+            font-size: 14px;
             color: #fff;
             background-color: #007BFF;
             border: none;
@@ -107,17 +113,23 @@
             background-color: #0056b3;
         }
 
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px 0;
+            background-color: #333;
+            color: #fff;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .builder-container {
                 flex-direction: column;
             }
 
-            .sidebar,
-            .drop-zone {
-                width: 100%;
-                max-width: none;
-                margin: 10px 0;
+            .sidebar {
+                margin-right: 0;
+                margin-bottom: 10px;
             }
         }
     </style>
@@ -127,26 +139,20 @@
     <div class="builder-container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <h2>Text Elements</h2>
+            <h2>Elements</h2>
             <div class="element" draggable="true" data-type="header">Header</div>
             <div class="element" draggable="true" data-type="footer">Footer</div>
             <div class="element" draggable="true" data-type="paragraph">Paragraph</div>
             <div class="element" draggable="true" data-type="heading1">Heading 1</div>
             <div class="element" draggable="true" data-type="heading2">Heading 2</div>
-
-            <h2>Media Elements</h2>
             <div class="element" draggable="true" data-type="image">Image</div>
             <div class="element" draggable="true" data-type="video">Video</div>
             <div class="element" draggable="true" data-type="audio">Audio</div>
             <div class="element" draggable="true" data-type="iframe">Iframe</div>
-
-            <h2>Interactive Elements</h2>
             <div class="element" draggable="true" data-type="button">Button</div>
-            <div class="element" draggable="true" data-type="input">Input Field</div>
+            <div class="element" draggable="true" data-type="input">Input</div>
             <div class="element" draggable="true" data-type="form">Form</div>
             <div class="element" draggable="true" data-type="textarea">Textarea</div>
-
-            <h2>Layout Elements</h2>
             <div class="element" draggable="true" data-type="table">Table</div>
             <div class="element" draggable="true" data-type="list">List</div>
             <div class="element" draggable="true" data-type="divider">Divider</div>
@@ -162,6 +168,9 @@
         <button onclick="clearCanvas()">Clear</button>
         <button onclick="exportHTML()">Export HTML</button>
     </div>
+    <footer>
+        © 2025 Vanjare.com
+    </footer>
 
     <script>
         const dropZone = document.getElementById('dropZone');
@@ -260,7 +269,28 @@
 
             newElement.classList.add('dropped');
             dropZone.appendChild(newElement);
+
+            // Add edit functionality
+            newElement.addEventListener('click', () => editElement(newElement));
         });
+
+        function editElement(element) {
+            let newContent;
+
+            if (element.tagName === 'P' || element.tagName === 'H1' || element.tagName === 'H2') {
+                newContent = prompt("Edit content:", element.textContent);
+                if (newContent !== null) {
+                    element.textContent = newContent;
+                }
+            } else if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.focus();
+            } else if (element.tagName === 'BUTTON') {
+                newContent = prompt("Edit button text:", element.textContent);
+                if (newContent !== null) {
+                    element.textContent = newContent;
+                }
+            }
+        }
 
         function clearCanvas() {
             dropZone.innerHTML = '<h2>Drop elements here</h2>';
