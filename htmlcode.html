@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Drag-and-Drop Website Builder</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Builder Layout */
+        .builder-container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .sidebar {
+            flex: 1 1 25%;
+            max-width: 300px;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px;
+            height: 600px;
+            overflow-y: auto;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .element {
+            padding: 8px;
+            margin-bottom: 8px;
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            cursor: grab;
+        }
+
+        .sidebar .element:hover {
+            background-color: #0056b3;
+        }
+
+        .drop-zone {
+            flex: 1 1 70%;
+            min-height: 600px;
+            background: #ffffff;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .drop-zone h2 {
+            color: #bbb;
+            text-align: center;
+        }
+
+        .drop-zone .dropped {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f0f8ff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .actions button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+
+        .actions button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .builder-container {
+                flex-direction: column;
+            }
+
+            .sidebar,
+            .drop-zone {
+                width: 100%;
+                max-width: none;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Responsive Drag-and-Drop Website Builder</h1>
+    <div class="builder-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Text Elements</h2>
+            <div class="element" draggable="true" data-type="header">Header</div>
+            <div class="element" draggable="true" data-type="footer">Footer</div>
+            <div class="element" draggable="true" data-type="paragraph">Paragraph</div>
+            <div class="element" draggable="true" data-type="heading1">Heading 1</div>
+            <div class="element" draggable="true" data-type="heading2">Heading 2</div>
+
+            <h2>Media Elements</h2>
+            <div class="element" draggable="true" data-type="image">Image</div>
+            <div class="element" draggable="true" data-type="video">Video</div>
+            <div class="element" draggable="true" data-type="audio">Audio</div>
+            <div class="element" draggable="true" data-type="iframe">Iframe</div>
+
+            <h2>Interactive Elements</h2>
+            <div class="element" draggable="true" data-type="button">Button</div>
+            <div class="element" draggable="true" data-type="input">Input Field</div>
+            <div class="element" draggable="true" data-type="form">Form</div>
+            <div class="element" draggable="true" data-type="textarea">Textarea</div>
+
+            <h2>Layout Elements</h2>
+            <div class="element" draggable="true" data-type="table">Table</div>
+            <div class="element" draggable="true" data-type="list">List</div>
+            <div class="element" draggable="true" data-type="divider">Divider</div>
+            <div class="element" draggable="true" data-type="grid">Grid</div>
+        </div>
+
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="dropZone">
+            <h2>Drop elements here</h2>
+        </div>
+    </div>
+    <div class="actions">
+        <button onclick="clearCanvas()">Clear</button>
+        <button onclick="exportHTML()">Export HTML</button>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+
+        // Handle drag events
+        document.querySelectorAll('.element').forEach(element => {
+            element.addEventListener('dragstart', event => {
+                event.dataTransfer.setData('type', event.target.getAttribute('data-type'));
+            });
+        });
+
+        dropZone.addEventListener('dragover', event => {
+            event.preventDefault();
+        });
+
+        dropZone.addEventListener('drop', event => {
+            event.preventDefault();
+            const type = event.dataTransfer.getData('type');
+            let newElement;
+
+            switch (type) {
+                case 'header':
+                    newElement = document.createElement('header');
+                    newElement.textContent = 'Website Header';
+                    break;
+                case 'footer':
+                    newElement = document.createElement('footer');
+                    newElement.textContent = 'Website Footer';
+                    break;
+                case 'paragraph':
+                    newElement = document.createElement('p');
+                    newElement.textContent = 'This is a sample paragraph.';
+                    break;
+                case 'heading1':
+                    newElement = document.createElement('h1');
+                    newElement.textContent = 'Heading 1';
+                    break;
+                case 'heading2':
+                    newElement = document.createElement('h2');
+                    newElement.textContent = 'Heading 2';
+                    break;
+                case 'image':
+                    newElement = document.createElement('img');
+                    newElement.src = 'https://via.placeholder.com/150';
+                    break;
+                case 'video':
+                    newElement = document.createElement('video');
+                    newElement.src = 'https://www.w3schools.com/html/mov_bbb.mp4';
+                    newElement.controls = true;
+                    break;
+                case 'audio':
+                    newElement = document.createElement('audio');
+                    newElement.src = 'https://www.w3schools.com/html/horse.mp3';
+                    newElement.controls = true;
+                    break;
+                case 'iframe':
+                    newElement = document.createElement('iframe');
+                    newElement.src = 'https://www.example.com';
+                    newElement.width = '100%';
+                    newElement.height = '200px';
+                    break;
+                case 'button':
+                    newElement = document.createElement('button');
+                    newElement.textContent = 'Click Me';
+                    break;
+                case 'input':
+                    newElement = document.createElement('input');
+                    newElement.placeholder = 'Enter text here';
+                    break;
+                case 'form':
+                    newElement = document.createElement('form');
+                    newElement.innerHTML = '<input type="text" placeholder="Your Name"><button>Submit</button>';
+                    break;
+                case 'textarea':
+                    newElement = document.createElement('textarea');
+                    newElement.placeholder = 'Enter your message...';
+                    break;
+                case 'table':
+                    newElement = document.createElement('table');
+                    newElement.innerHTML = '<tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Data 1</td><td>Data 2</td></tr>';
+                    break;
+                case 'list':
+                    newElement = document.createElement('ul');
+                    newElement.innerHTML = '<li>Item 1</li><li>Item 2</li><li>Item 3</li>';
+                    break;
+                case 'divider':
+                    newElement = document.createElement('hr');
+                    break;
+                case 'grid':
+                    newElement = document.createElement('div');
+                    newElement.innerHTML = '<div style="width:50%; float:left;">Column 1</div><div style="width:50%; float:left;">Column 2</div>';
+                    break;
+                default:
+                    return;
+            }
+
+            newElement.classList.add('dropped');
+            dropZone.appendChild(newElement);
+        });
+
+        function clearCanvas() {
+            dropZone.innerHTML = '<h2>Drop elements here</h2>';
+        }
+
+        function exportHTML() {
+            const content = dropZone.innerHTML;
+            const html = `
+<!DOCTYPE html>
+<html>
+<head><title>Exported Page</title></head>
+<body>${content}</body>
+</html>`;
+            const blob = new Blob([html], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'exported_page.html';
+            a.click();
+        }
+    </script>
+</body>
+</html>
